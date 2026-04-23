@@ -28,3 +28,6 @@ npm-debug.log*
 
 # Coverage
 coverage/
+
+# Project Reports (local only, not tracked in git)
+project-reports/
