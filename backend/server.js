@@ -37,13 +37,13 @@ app.get("/api/health", (req, res) => {
 
 // We will add more route files here as we build them:
 const authRoutes = require("./routes/authRoutes");
-// const resumeRoutes = require("./routes/resumeRoutes");
+const resumeRoutes = require("./routes/resumeRoutes");
 // const jobRoutes = require("./routes/jobRoutes");
 // const matchRoutes = require("./routes/matchRoutes");
 
 // Mount the auth routes on /api/auth
 app.use("/api/auth", authRoutes);
-// app.use("/api/resumes", resumeRoutes);
+app.use("/api/resumes", resumeRoutes);
 // app.use("/api/jobs", jobRoutes);
 // app.use("/api/matches", matchRoutes);
 
