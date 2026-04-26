@@ -6,7 +6,9 @@
 
 const jwt = require("jsonwebtoken");
 
-const authMiddleware = (req, res, next) => {
+const User = require("../models/User");
+
+const authMiddleware = async (req, res, next) => {
   // Get the Authorization header from the request
   // Expected format: "Bearer <token>"
   const authHeader = req.headers.authorization;
@@ -25,9 +27,15 @@ const authMiddleware = (req, res, next) => {
     // which contains the user ID we stored during login
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Attach the decoded data to the request object
-    // Now any controller after this middleware can access req.user.id
-    req.user = decoded;
+    // Fetch the user from the database to get their role and other details
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) {
+      return res.status(401).json({ message: "User no longer exists" });
+    }
+
+    // Attach the user document to the request object
+    // Now any controller after this middleware can access req.user.id and req.user.role
+    req.user = user;
 
     // Call next() to pass control to the next middleware or route handler
     next();
