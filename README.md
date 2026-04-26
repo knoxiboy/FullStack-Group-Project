@@ -14,34 +14,119 @@ A full-stack MERN application designed to automate and optimize the recruitment 
 
 ## Tech Stack
 
-**Frontend:**
-* React.js
-* TailwindCSS
-* Axios
-* React Router DOM
+**Frontend:** React.js, TailwindCSS, Axios, React Router DOM
+**Backend:** Node.js, Express.js, JWT Authentication, Bcrypt.js, Multer
+**Resume Parsing:** pdf-parse, mammoth, Regex + keyword-based parsing
+**Database:** MongoDB, Mongoose
 
-**Backend:**
-* Node.js
-* Express.js
-* JWT Authentication
-* Bcrypt.js
-* Multer
+## System Architecture
 
-**Resume Parsing:**
-* pdf-parse
-* mammoth
-* Regex + keyword-based parsing
+The system follows a standard three-tier architecture utilizing the MERN stack.
 
-**Database:**
-* MongoDB
-* Mongoose
+```mermaid
+graph LR
+    UserInterface[User Interface] --> WebServer[Web Server]
+    WebServer --> RecruiterPortal[Recruiter Portal]
+    WebServer --> ApplicantPortal[Applicant Portal]
+    
+    ApplicantPortal --> APIGateway1[API Gateway]
+    APIGateway1 -- Upload Resume --> ResumeParserService[Resume Parser Service]
+    ResumeParserService <--> ExtractionEngine[Extraction Engine]
+    ResumeParserService --> CandidateDatabase[(Candidate Database)]
+    CandidateDatabase --> SkillsExtractor[Skills Extractor]
+    CandidateDatabase --> EducationHistoryService[Education & History Service]
+    CandidateDatabase --> ProfileBuilderService[Profile Builder Service]
+    
+    RecruiterPortal --> APIGateway2[API Gateway]
+    APIGateway2 -- Job Opening Input --> MatchingEngine[Matching Engine]
+    MatchingEngine <--> SkillBasedScoring[Skill-based Scoring]
+    MatchingEngine --> ShortlistedCandidates[Shortlisted Candidates & Rankings]
+    ShortlistedCandidates --> RecruiterPortal
+    
+    JobDescriptionDatabase[(Job Description Database)] --> MatchingEngine
+    CandidateDatabase --> MatchingEngine
+```
 
-## Architecture
+## Entity-Relationship (ER) Diagram
 
-The system follows a standard three-tier architecture:
+```mermaid
+erDiagram
+    Recruiter {
+        string recruiter_id PK
+        string name
+        string email
+        string company_name
+        string password
+    }
+    
+    Resume {
+        string resume_id PK
+        string candidate_name
+        string email
+        string contact_no
+    }
+    
+    PARSING_RESULT {
+        string result_id PK
+        string status
+        string extracted_text_file
+        date parsed_at
+    }
+    
+    Skills {
+        string skill_id PK
+        string skill_name
+    }
+    
+    Education {
+        string edu_id PK
+        string degree
+        string institution
+        string year
+    }
+    
+    Work_Experience {
+        string exp_id PK
+        string job_title
+        string company
+        string duration
+    }
+    
+    Job_Requirement {
+        string job_id PK
+        string title
+        string description
+        string required_skills
+    }
+    
+    Shortlist {
+        string shortlist_id PK
+        string name
+        date created_at
+    }
+    
+    Recruiter ||--o{ Resume : UPLOADS
+    Resume ||--o| PARSING_RESULT : CONTAINED_IN
+    PARSING_RESULT ||--o{ Skills : EXTRACTS
+    PARSING_RESULT ||--o{ Education : EXTRACTS
+    PARSING_RESULT ||--o{ Work_Experience : EXTRACTS
+    Job_Requirement ||--o{ PARSING_RESULT : MATCHES
+    Shortlist ||--o{ PARSING_RESULT : BELONGS_TO
+    Recruiter ||--o{ Shortlist : SELECTS
+```
 
-```text
-Frontend (React) -> HTTP/REST APIs -> Backend (Node/Express) -> Mongoose ODM -> Database (MongoDB)
+## User Flow
+
+```mermaid
+flowchart TD
+    Start([Start]) --> RecruiterDashboard[Recruiter Dashboard]
+    RecruiterDashboard --> ResumeUpload[Resume Upload PDF/DOCX]
+    ResumeUpload --> ParsingDataExtraction[Parsing and Data Extraction]
+    ParsingDataExtraction --> ViewCandidates[View Candidates]
+    ViewCandidates --> JobRequirementInput[Job Requirement Input]
+    JobRequirementInput --> SkillMatching[Skill Matching]
+    SkillMatching --> RankedShortlist[Ranked Shortlist]
+    RankedShortlist --> End([End])
 ```
 
 ## Project Structure
@@ -49,20 +134,23 @@ Frontend (React) -> HTTP/REST APIs -> Backend (Node/Express) -> Mongoose ODM -> 
 ```text
 root/
 ├── backend/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── services/
-│   ├── uploads/
-│   └── server.js
+│   ├── controllers/      # Route controllers (auth, jobs, resumes, matching)
+│   ├── middleware/       # JWT auth and Multer upload middlewares
+│   ├── models/           # Mongoose schemas (User, Job, Candidate)
+│   ├── routes/           # Express API routes
+│   ├── services/         # Core parsing and text extraction logic
+│   ├── uploads/          # Temporary storage for uploaded resumes
+│   └── server.js         # Entry point for backend
 ├── frontend/
+│   ├── public/
+│   │   ├── icons/        # SVG Icons
+│   │   └── images/       # Static Images
 │   ├── src/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── pages/
-│   │   ├── App.jsx
-│   │   └── main.jsx
+│   │   ├── components/   # Reusable UI components
+│   │   ├── context/      # React AuthContext
+│   │   ├── pages/        # Main route views (Dashboard, Login, Upload)
+│   │   ├── App.jsx       # React Router setup
+│   │   └── main.jsx      # React DOM rendering
 ```
 
 ## Authentication Flow
@@ -94,15 +182,6 @@ Match Score = (Matched Skills / Required Skills) × 100
 ```
 
 *Example: If a job requires 4 skills and the candidate possesses 3 of them, their match score is calculated as 75%.*
-
-## Workflow
-
-1. **Authentication:** Recruiter registers or logs into the platform.
-2. **Job Definition:** Recruiter creates a new job posting, defining the title and required skills.
-3. **Data Ingestion:** Recruiter uploads a candidate's resume (PDF/DOCX) via the dashboard.
-4. **Parsing:** The backend extracts the text, identifies key data points, and stores the structured candidate profile.
-5. **Evaluation:** Recruiter opens the job matching view.
-6. **Ranking:** The system calculates real-time match scores and displays a sorted list of the most qualified candidates.
 
 ## Installation Guide
 
