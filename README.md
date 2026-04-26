@@ -4,13 +4,14 @@ A full-stack MERN application designed to automate and optimize the recruitment 
 
 ## Features
 
-* **Resume Upload:** Process candidate resumes in PDF and DOCX formats.
+* **Resume Upload & ATS Analysis:** Candidates can upload resumes (PDF/DOCX) for real-time ATS scoring and feedback.
+* **Recruiter & Candidate Portals:** Distinct dashboards for different user roles with tailored functionality.
 * **Automatic Data Extraction:** Extract name, email, phone, skills, education, and experience using structured rules.
-* **Secure Authentication:** Role-based access control for recruiters using JWT and Bcrypt.
-* **Job Creation:** Define roles and specific required skills for open positions.
+* **Role-Based Authentication:** Secure access control using JWT and Bcrypt, with automated redirection based on user role.
+* **Job Creation:** Recruiters can define roles and specific required skills for open positions.
 * **Dynamic Skill Matching Engine:** Calculate match scores in real-time based on job requirements.
-* **Candidate Ranking:** Automatically sort and rank candidates by their match score.
-* **Recruiter Dashboard:** Centralized view of active jobs, parsed profiles, and matching results.
+* **Candidate Ranking:** Automatically sort and rank candidates by their match score for recruiters.
+* **Detailed Analysis Reports:** Candidates receive actionable feedback on how to improve their resume for ATS compatibility.
 
 ## Tech Stack
 
