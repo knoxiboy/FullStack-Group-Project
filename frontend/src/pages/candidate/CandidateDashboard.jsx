@@ -72,7 +72,10 @@ const CandidateDashboard = () => {
       <h2 className="text-2xl font-bold mb-6">Recent Scans</h2>
       
       {loading ? (
-        <div className="text-center py-10">Loading history...</div>
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-400 font-medium">Fetching your scan history...</p>
+        </div>
       ) : history.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {history.map((item) => (
