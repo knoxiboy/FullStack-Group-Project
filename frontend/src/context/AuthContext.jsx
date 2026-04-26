@@ -43,10 +43,12 @@ export const AuthProvider = ({ children }) => {
       password,
     });
     setToken(res.data.token);
+    setUser(res.data.user);
     localStorage.setItem("token", res.data.token);
+    return res.data;
   };
 
-  const signup = async (name, email, password, role = "recruiter") => {
+  const signup = async (name, email, password, role = "candidate") => {
     const res = await axios.post("/auth/signup", {
       username: name,
       email,
@@ -54,7 +56,9 @@ export const AuthProvider = ({ children }) => {
       role,
     });
     setToken(res.data.token);
+    setUser(res.data.user);
     localStorage.setItem("token", res.data.token);
+    return res.data;
   };
 
   const logout = () => {
