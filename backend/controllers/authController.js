@@ -12,7 +12,7 @@ const User = require("../models/User");
 const signup = async (req, res) => {
   try {
     // Get the data from the request body
-    const { username, email, password } = req.body;
+    const { username, email, password, role } = req.body;
 
     // Check if all required fields are provided
     if (!username || !email || !password) {
@@ -35,6 +35,7 @@ const signup = async (req, res) => {
       username: username,
       email: email,
       password: hashedPassword,
+      role: role || "candidate",
     });
 
     // Save to the database

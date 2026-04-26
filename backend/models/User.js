@@ -30,11 +30,11 @@ const userSchema = new mongoose.Schema({
   },
 
   // Role determines what the user can do in the system
-  // For now we only have "recruiter" but admin could be added later
+  // "recruiter" for employers, "candidate" for job seekers
   role: {
     type: String,
-    enum: ["recruiter", "admin"],
-    default: "recruiter",
+    enum: ["recruiter", "candidate", "admin"],
+    default: "candidate",
   },
 
   // Mongoose automatically manages createdAt and updatedAt fields
