@@ -9,6 +9,7 @@ const CandidateDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = "Candidate Dashboard | ResumeAI";
     const fetchHistory = async () => {
       try {
         const res = await axios.get("/candidate/history");
