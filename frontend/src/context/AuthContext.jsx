@@ -24,8 +24,8 @@ export const AuthProvider = ({ children }) => {
         return;
       }
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/profile");
-        setUser(res.data.data);
+        const res = await axios.get("/auth/profile");
+        setUser(res.data.user);
       } catch (error) {
         console.error("Error fetching user profile", error);
         logout();
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password) => {
-    const res = await axios.post("http://localhost:5000/api/auth/login", {
+    const res = await axios.post("/auth/login", {
       email,
       password,
     });
@@ -47,8 +47,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password, role = "recruiter") => {
-    const res = await axios.post("http://localhost:5000/api/auth/signup", {
-      name,
+    const res = await axios.post("/auth/signup", {
+      username: name,
       email,
       password,
       role,

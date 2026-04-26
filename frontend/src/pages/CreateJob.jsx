@@ -30,7 +30,7 @@ const CreateJob = () => {
         return;
       }
 
-      await axios.post("http://localhost:5000/api/jobs", {
+      await axios.post("/jobs", {
         title,
         description,
         experienceLevel,

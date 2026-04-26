@@ -14,7 +14,7 @@ const MatchResults = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/matches/${jobId}`);
+        const res = await axios.get(`/matches/${jobId}`);
         setMatches(res.data.data);
         setJobTitle(res.data.jobTitle);
         setRequiredSkills(res.data.requiredSkills);

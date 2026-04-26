@@ -23,7 +23,7 @@ const Navbar = () => {
                 Dashboard
               </Link>
               <div className="flex items-center gap-4">
-                <span className="text-muted">Hello, {user.name}</span>
+                <span className="text-muted">Hello, {user.username}</span>
                 <button onClick={handleLogout} className="btn btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.9rem' }}>
                   Logout
                 </button>

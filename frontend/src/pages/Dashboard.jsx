@@ -14,8 +14,8 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const [jobsRes, candidatesRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/jobs"),
-          axios.get("http://localhost:5000/api/resumes/candidates")
+          axios.get("/jobs"),
+          axios.get("/resumes/candidates")
         ]);
 
         setJobs(jobsRes.data.data);
@@ -44,7 +44,7 @@ const Dashboard = () => {
       <div className="flex justify-between items-center mb-4">
         <div>
           <h2>Dashboard</h2>
-          <p>Welcome back, {user?.name}</p>
+          <p>Welcome back, {user?.username}</p>
         </div>
       </div>
 
