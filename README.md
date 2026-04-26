@@ -4,21 +4,22 @@ A full-stack MERN application designed to automate and optimize the recruitment 
 
 ## Features
 
-* **Resume Upload & MaesterMatch Analysis:** Candidates can upload resumes (PDF/DOCX) for real-time analysis and feedback.
+* **Resume Upload & MaesterMatch Analysis:** Candidates can upload resumes (PDF/DOCX) for real-time analysis and feedback powered by **Puter AI**.
 * **Recruiter & Candidate Portals:** Distinct dashboards for different user roles with tailored functionality.
 * **Automatic Data Extraction:** Extract name, email, phone, skills, education, and experience using structured rules.
 * **Role-Based Authentication:** Secure access control using JWT and Bcrypt, with automated redirection based on user role.
 * **Job Creation:** Recruiters can define roles and specific required skills for open positions.
 * **Dynamic Skill Matching Engine:** Calculate match scores in real-time based on job requirements.
 * **Candidate Ranking:** Automatically sort and rank candidates by their match score for recruiters.
-* **Detailed Analysis Reports:** Candidates receive actionable feedback on how to improve their resume for ATS compatibility.
+* **Detailed Analysis Reports:** Candidates receive actionable feedback on how to improve their resume for ATS compatibility using **Claude 3.5 Sonnet**.
 
 ## Tech Stack
 
 **Frontend:** React.js, TailwindCSS, Axios, React Router DOM
 **Backend:** Node.js, Express.js, JWT Authentication, Bcrypt.js, Multer
 **Resume Parsing:** pdf-parse, mammoth, Regex + keyword-based parsing
-**Database:** MongoDB, Mongoose
+**AI Integration:** Puter.js (Claude 3.5 Sonnet)
+**Database:** MongoDB, Mongoose, Puter KV Store
 
 ## System Architecture
 
@@ -177,12 +178,22 @@ The application utilizes stateless JWT-based authentication for secure access.
 
 ## Resume Parsing Engine
 
-The core parsing engine is entirely rule-based, designed to extract structured information from unstructured text without relying on external AI models.
+MaesterMatch utilizes a **Hybrid Parsing Architecture** that balances speed for recruiters and depth for candidates.
+
+### 1. Rule-Based Engine (Backend)
+Designed for high-speed bulk processing, this engine extracts structured information without relying on external AI models.
 
 * **Text Extraction:** Utilizes `pdf-parse` for PDF files and `mammoth` for DOCX files to extract raw textual data.
 * **Pattern Matching:** Employs precise Regular Expressions (Regex) to reliably isolate email addresses and phone numbers.
 * **Keyword Detection:** Scans the extracted text against a predefined `SKILLS_DATABASE`. It utilizes word-boundary regex (`\b`) to ensure accurate extraction and prevent partial word matches (false positives).
 * **Section Mapping:** Identifies standard resume headers (e.g., "Experience", "Education") to break the document into parsable segments.
+
+### 2. AI-Powered Analysis (Puter AI + Claude 3.5 Sonnet)
+For candidates seeking deep qualitative feedback, MaesterMatch integrates the **Puter.js** cloud service:
+* **Qualitative Review:** Claude 3.5 Sonnet acts as an "Elite Senior Hiring Manager" to critique resume tone, content, and structure.
+* **Actionable Tips:** Generates specific transformation tips using industry-standard formulas.
+* **Dynamic Scoring:** Provides a nuanced "Overall Score" (0-100) based on role suitability and content depth.
+
 
 ## Matching Algorithm
 
