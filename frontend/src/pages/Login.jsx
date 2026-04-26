@@ -13,8 +13,8 @@ const Login = () => {
     e.preventDefault();
     try {
       setError("");
-      await login(email, password);
-      navigate("/dashboard");
+      const res = await login(email, password);
+      navigate(res.user.role === "recruiter" ? "/dashboard" : "/candidate-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to login");
     }

@@ -6,6 +6,7 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("candidate");
   const [error, setError] = useState("");
   const { signup } = useAuth();
   const navigate = useNavigate();
@@ -14,9 +15,8 @@ const Signup = () => {
     e.preventDefault();
     try {
       setError("");
-      // Defaulting role to "recruiter" for this app
-      await signup(name, email, password, "recruiter");
-      navigate("/dashboard");
+      await signup(name, email, password, role);
+      navigate(role === "recruiter" ? "/dashboard" : "/candidate-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create account");
     }
@@ -59,6 +59,34 @@ const Signup = () => {
               required
               placeholder="you@company.com"
             />
+          </div>
+          
+          <div className="form-group">
+            <label className="form-label">Join as</label>
+            <div className="flex gap-4 mt-2">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="role"
+                  value="candidate"
+                  checked={role === "candidate"}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="mr-2"
+                />
+                <span>Candidate</span>
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="role"
+                  value="recruiter"
+                  checked={role === "recruiter"}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="mr-2"
+                />
+                <span>Recruiter</span>
+              </label>
+            </div>
           </div>
           
           <div className="form-group">
