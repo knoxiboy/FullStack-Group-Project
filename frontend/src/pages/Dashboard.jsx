@@ -18,8 +18,8 @@ const Dashboard = () => {
           axios.get("/resumes/candidates")
         ]);
 
-        setJobs(jobsRes.data.data);
-        setCandidates(candidatesRes.data.data);
+        setJobs(jobsRes.data.data || []);
+        setCandidates(candidatesRes.data.candidates || []);
       } catch (err) {
         console.error("Error fetching dashboard data", err);
         setError("Failed to load dashboard data. Please try again later.");

@@ -61,7 +61,7 @@ const UploadResume = () => {
       });
 
       setSuccess("Resume parsed successfully!");
-      setParsedData(res.data.data);
+      setParsedData(res.data.candidate);
       // Reset input
       setFile(null);
       setFileInputState("");
