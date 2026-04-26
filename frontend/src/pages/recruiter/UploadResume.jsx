@@ -68,7 +68,7 @@ const UploadResume = () => {
     formData.append("resume", file);
 
     try {
-      const res = await axios.post("/resumes/upload", formData, {
+      const res = await axios.post("/api/resumes/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

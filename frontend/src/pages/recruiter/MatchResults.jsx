@@ -30,7 +30,7 @@ const MatchResults = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const res = await axios.get(`/matches/${jobId}`);
+        const res = await axios.get(`/api/matches/${jobId}`);
         setMatches(res.data.data);
         setJobTitle(res.data.jobTitle);
         setRequiredSkills(res.data.requiredSkills);

@@ -28,8 +28,8 @@ const RecruiterDashboard = () => {
     const fetchData = async () => {
       try {
         const [jobsRes, candidatesRes] = await Promise.all([
-          axios.get("/jobs"),
-          axios.get("/resumes/candidates")
+          axios.get("/api/jobs"),
+          axios.get("/api/resumes/candidates")
         ]);
 
         setJobs(jobsRes.data.data || []);

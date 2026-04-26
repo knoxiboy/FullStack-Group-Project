@@ -41,7 +41,7 @@ const CreateJob = () => {
         return;
       }
 
-      await axios.post("/jobs", {
+      await axios.post("/api/jobs", {
         title,
         description,
         experienceLevel,

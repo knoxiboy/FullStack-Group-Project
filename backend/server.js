@@ -35,12 +35,23 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running" });
 });
 
+// Root route to show the API is alive
+app.get("/", (req, res) => {
+  res.send("<h1>MaesterMatch API</h1><p>The backend server is running successfully. Access the API at /api/health</p>");
+});
+
 // Route mounting
 app.use("/api/auth", require("./routes/shared/authRoutes"));
 app.use("/api/resumes", require("./routes/recruiter/resumeRoutes"));
 app.use("/api/jobs", require("./routes/recruiter/jobRoutes"));
 app.use("/api/matches", require("./routes/recruiter/matchRoutes"));
 app.use("/api/candidate", require("./routes/candidate/candidateRoutes"));
+
+// Catch-all route for undefined routes (404)
+app.use((req, res) => {
+  console.log(`404 Not Found: ${req.method} ${req.url}`);
+  res.status(404).json({ message: `Route ${req.method} ${req.url} not found on this server.` });
+});
 
 // --- Start the server ---
 

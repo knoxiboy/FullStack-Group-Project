@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
       try {
-        const res = await axios.get("/auth/profile");
+        const res = await axios.get("/api/auth/profile");
         setUser(res.data.user);
       } catch (error) {
         console.error("Error fetching user profile", error);
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password) => {
-    const res = await axios.post("/auth/login", {
+    const res = await axios.post("/api/auth/login", {
       email,
       password,
     });
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password, role = "candidate") => {
-    const res = await axios.post("/auth/signup", {
+    const res = await axios.post("/api/auth/signup", {
       username: name,
       email,
       password,
