@@ -9,6 +9,7 @@ const AnalysisReport = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    document.title = "Analysis Report | ResumeAI";
     const fetchAnalysis = async () => {
       try {
         const res = await axios.get(`/candidate/analysis/${id}`);
