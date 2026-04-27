@@ -30,4 +30,4 @@ npm-debug.log*
 coverage/
 
 # Project Reports
-# project-reports/ is now tracked to ensure documentation is available in the repository
+project-reports/
