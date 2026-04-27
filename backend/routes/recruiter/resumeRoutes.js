@@ -26,4 +26,7 @@ router.get("/candidates/:id", auth, getCandidateById);
 // DELETE /api/resumes/candidates/:id - Delete a candidate
 router.delete("/candidates/:id", auth, deleteCandidate);
 
+// PUT /api/resumes/candidates/:id - Update a candidate
+router.put("/candidates/:id", auth, require("../../controllers/recruiter/resumeController").updateCandidate);
+
 module.exports = router;

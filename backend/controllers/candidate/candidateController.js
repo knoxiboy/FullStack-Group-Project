@@ -16,13 +16,13 @@ const uploadAndAnalyze = async (req, res) => {
     const filePath = req.file.path;
     const mimeType = req.file.mimetype;
 
-    // 1. Extract text
+
     const text = await extractText(filePath, mimeType);
 
-    // 2. Analyze text
+
     const analysis = await analyzeResume(text);
 
-    // 3. Save to database
+
     const newAnalysis = new ResumeAnalysis({
       user: req.user.id,
       fileName: req.file.originalname,

@@ -14,7 +14,8 @@ import {
   Loader2,
   AlertCircle,
   Trophy,
-  Filter
+  Filter,
+  XCircle
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -24,6 +25,8 @@ const MatchResults = () => {
   const [matches, setMatches] = useState([]);
   const [jobTitle, setJobTitle] = useState("");
   const [requiredSkills, setRequiredSkills] = useState([]);
+  const [acceptedCandidates, setAcceptedCandidates] = useState([]);
+  const [rejectedCandidates, setRejectedCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -34,6 +37,8 @@ const MatchResults = () => {
         setMatches(res.data.data);
         setJobTitle(res.data.jobTitle);
         setRequiredSkills(res.data.requiredSkills);
+        setAcceptedCandidates(res.data.acceptedCandidates || []);
+        setRejectedCandidates(res.data.rejectedCandidates || []);
       } catch (err) {
         console.error("Error fetching matches", err);
         setError("Failed to synchronize with MaesterMatch engine.");
@@ -44,6 +49,32 @@ const MatchResults = () => {
 
     fetchMatches();
   }, [jobId]);
+
+  const handleAcceptCandidate = async (candidateId) => {
+    try {
+      const res = await axios.put(`/api/jobs/${jobId}/accept`, { candidateId });
+      if (res.data.success) {
+        setAcceptedCandidates([...acceptedCandidates, candidateId]);
+        setRejectedCandidates(rejectedCandidates.filter(id => id !== candidateId));
+      }
+    } catch (err) {
+      console.error("Error accepting candidate", err);
+      alert(err.response?.data?.message || "Failed to accept candidate");
+    }
+  };
+
+  const handleRejectCandidate = async (candidateId) => {
+    try {
+      const res = await axios.put(`/api/jobs/${jobId}/reject`, { candidateId });
+      if (res.data.success) {
+        setRejectedCandidates([...rejectedCandidates, candidateId]);
+        setAcceptedCandidates(acceptedCandidates.filter(id => id !== candidateId));
+      }
+    } catch (err) {
+      console.error("Error rejecting candidate", err);
+      alert(err.response?.data?.message || "Failed to reject candidate");
+    }
+  };
 
   if (loading) {
     return (
@@ -131,7 +162,22 @@ const MatchResults = () => {
                </Link>
             </div>
           ) : (
-            matches.map((candidate, index) => {
+            matches
+              .sort((a, b) => {
+                const aAccepted = acceptedCandidates.includes(a._id);
+                const aRejected = rejectedCandidates.includes(a._id);
+                const bAccepted = acceptedCandidates.includes(b._id);
+                const bRejected = rejectedCandidates.includes(b._id);
+
+                const aDecided = aAccepted || aRejected;
+                const bDecided = bAccepted || bRejected;
+
+                if (!aDecided && bDecided) return -1;
+                if (aDecided && !bDecided) return 1;
+                
+                return b.matchScore - a.matchScore;
+              })
+              .map((candidate, index) => {
               const score = candidate.matchScore;
               const isHighMatch = score >= 85;
               const isMidMatch = score >= 65 && score < 85;
@@ -212,13 +258,36 @@ const MatchResults = () => {
                           </div>
                        </div>
                        
-                       <Link 
-                        to={`/report/${candidate._id}`} 
-                        className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary-500 hover:text-white transition-all shadow-xl shadow-white/5 group/btn"
-                       >
-                         Full Report
-                         <ChevronRight className="size-4 group-hover/btn:translate-x-1 transition-transform" />
-                       </Link>
+                       <div className="flex flex-col sm:flex-row gap-3">
+                        {acceptedCandidates.includes(candidate._id) ? (
+                          <div className="flex items-center gap-2 px-6 py-3 bg-emerald-500/20 border border-emerald-500/30 text-emerald-500 rounded-xl font-black text-xs uppercase tracking-widest cursor-default">
+                            <CheckCircle2 className="size-4" />
+                            Accepted
+                          </div>
+                        ) : rejectedCandidates.includes(candidate._id) ? (
+                          <div className="flex items-center gap-2 px-6 py-3 bg-rose-500/20 border border-rose-500/30 text-rose-400 rounded-xl font-black text-xs uppercase tracking-widest cursor-default">
+                            <XCircle className="size-4" />
+                            Rejected
+                          </div>
+                        ) : (
+                          <>
+                            <button 
+                              onClick={() => handleAcceptCandidate(candidate._id)}
+                              className="flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary-500 transition-all shadow-xl shadow-primary-500/20"
+                            >
+                              <CheckCircle2 className="size-4" />
+                              Accept
+                            </button>
+                            <button 
+                              onClick={() => handleRejectCandidate(candidate._id)}
+                              className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 text-gray-400 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all"
+                            >
+                              <XCircle className="size-4" />
+                              Reject
+                            </button>
+                          </>
+                        )}
+                       </div>
                     </div>
                   </div>
                 </div>

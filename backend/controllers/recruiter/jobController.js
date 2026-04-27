@@ -170,13 +170,130 @@ exports.deleteJob = async (req, res) => {
       data: {},
     });
   } catch (error) {
-    console.error("Error deleting job:", error.message);
-    if (error.name === "CastError") {
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// @desc    Accept a candidate for a job
+// @route   PUT /api/jobs/:id/accept
+// @access  Private
+exports.acceptCandidate = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
       return res.status(404).json({
         success: false,
         message: "Job not found",
       });
     }
+
+    // Make sure user owns the job
+    if (job.createdBy.toString() !== req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized to update this job",
+      });
+    }
+
+    const { candidateId } = req.body;
+
+    if (!candidateId) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a candidate ID",
+      });
+    }
+
+    // Check if candidate is already accepted
+    if (job.acceptedCandidates.includes(candidateId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Candidate already accepted for this job",
+      });
+    }
+
+    // If candidate was rejected, remove from rejected list
+    if (job.rejectedCandidates.includes(candidateId)) {
+      job.rejectedCandidates = job.rejectedCandidates.filter(
+        (id) => id.toString() !== candidateId
+      );
+    }
+
+    job.acceptedCandidates.push(candidateId);
+    await job.save();
+
+    res.status(200).json({
+      success: true,
+      data: job,
+    });
+  } catch (error) {
+    console.error("Error accepting candidate:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// @desc    Reject a candidate for a job
+// @route   PUT /api/jobs/:id/reject
+// @access  Private
+exports.rejectCandidate = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found",
+      });
+    }
+
+    // Make sure user owns the job
+    if (job.createdBy.toString() !== req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized to update this job",
+      });
+    }
+
+    const { candidateId } = req.body;
+
+    if (!candidateId) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a candidate ID",
+      });
+    }
+
+    // Check if candidate is already rejected
+    if (job.rejectedCandidates.includes(candidateId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Candidate already rejected for this job",
+      });
+    }
+
+    // If candidate was accepted, remove from accepted list
+    if (job.acceptedCandidates.includes(candidateId)) {
+      job.acceptedCandidates = job.acceptedCandidates.filter(
+        (id) => id.toString() !== candidateId
+      );
+    }
+
+    job.rejectedCandidates.push(candidateId);
+    await job.save();
+
+    res.status(200).json({
+      success: true,
+      data: job,
+    });
+  } catch (error) {
+    console.error("Error rejecting candidate:", error.message);
     res.status(500).json({
       success: false,
       message: "Server Error",

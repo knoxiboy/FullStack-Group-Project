@@ -76,6 +76,8 @@ exports.getJobMatches = async (req, res) => {
       count: matchedCandidates.length,
       jobTitle: job.title,
       requiredSkills: job.requiredSkills,
+      acceptedCandidates: job.acceptedCandidates || [],
+      rejectedCandidates: job.rejectedCandidates || [],
       data: matchedCandidates,
     });
   } catch (error) {

@@ -138,5 +138,28 @@ const deleteCandidate = async (req, res) => {
   }
 };
 
+// Update a candidate
+// Route: PUT /api/resumes/candidates/:id
+const updateCandidate = async (req, res) => {
+  try {
+    const candidate = await Candidate.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    res.json({
+      message: "Candidate updated successfully",
+      candidate: candidate,
+    });
+  } catch (error) {
+    console.error("Update candidate error:", error.message);
+    res.status(500).json({ message: "Error updating candidate" });
+  }
+};
+
 // Export the upload middleware along with the controller functions
-module.exports = { upload, uploadResume, getCandidates, getCandidateById, deleteCandidate };
+module.exports = { upload, uploadResume, getCandidates, getCandidateById, deleteCandidate, updateCandidate };

@@ -1,14 +1,10 @@
-// authController.js - Handles user registration and login
-// This controller contains the business logic for authentication.
-// It uses bcryptjs to hash passwords and jsonwebtoken to create tokens.
+
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 
-// --- SIGNUP ---
-// Creates a new user account
-// Route: POST /api/auth/signup
+
 const signup = async (req, res) => {
   try {
     // Get the data from the request body
@@ -25,8 +21,7 @@ const signup = async (req, res) => {
       return res.status(400).json({ message: "Email already registered" });
     }
 
-    // Hash the password before saving
-    // The number 10 is the salt rounds - higher means more secure but slower
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -41,16 +36,14 @@ const signup = async (req, res) => {
     // Save to the database
     await newUser.save();
 
-    // Generate a JWT token for the newly registered user
-    // This way they are logged in immediately after signup
+  
     const token = jwt.sign(
       { id: newUser._id },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRE }
     );
 
-    // Send back the user data and token
-    // We do not send the password back to the client
+
     res.status(201).json({
       message: "User registered successfully",
       token: token,
@@ -67,9 +60,7 @@ const signup = async (req, res) => {
   }
 };
 
-// --- LOGIN ---
-// Authenticates a user and returns a JWT token
-// Route: POST /api/auth/login
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -85,14 +76,12 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Compare the provided password with the stored hash
-    // bcrypt.compare hashes the input and checks it against the stored hash
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Generate a JWT token
+
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
@@ -116,14 +105,9 @@ const login = async (req, res) => {
   }
 };
 
-// --- GET PROFILE ---
-// Returns the logged-in user's profile data
-// Route: GET /api/auth/profile
-// This route requires authentication (JWT token in the header)
 const getProfile = async (req, res) => {
   try {
-    // req.user is set by the auth middleware (we will create it next)
-    // We use .select("-password") to exclude the password from the result
+  
     const user = await User.findById(req.user.id).select("-password");
 
     if (!user) {
